@@ -1,0 +1,10 @@
+{
+    "name": "微信自动发送消息",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "org.runze.wechatautomsg",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
