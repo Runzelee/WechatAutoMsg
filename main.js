@@ -24,7 +24,7 @@ const APPLOCK_POSITION = Array(null, //应用锁的每个图案点坐标
     [145, 1060], [360, 1060], [570, 1060],
     [145, 1268], [360, 1268], [570, 1268]
 );
-const DEBUG = false; //启用则不发送消息，只到达消息框输入消息
+const DEBUG = true; //启用则不发送消息，只到达消息框输入消息
 
 if (!device.isScreenOn()) {
     if (HASPWD) unlock(false);
@@ -33,17 +33,19 @@ if (!device.isScreenOn()) {
 toast("脚本开始运行，若你正在使用手机，请等待脚本执行完毕");
 var launchtime = 0;
 while (!id("fly").exists()) {
-    if (HASAPPLOCK && text("请输入密码").exists()) {
-        unlock(true);
-        sleep(500);
-        if (id("fly").exists()) {
-            break;
-        }
-    }
     if (currentActivity().includes("com.tencent.mm")) {
+        var backtime = 0;
         while (!id("fly").exists()) {
+            if(currentActivity().match("com.tencent.mm.app.WeChatSplashActivity")){
+                id("fly").waitFor();//在地球小人页面等待进入主页
+                break;
+            }
+            backtime++;
             back();//在微信的其他activity返回到首页
             sleep(500);
+            if (backtime > 10) {
+                toast("第" + backtime + "次返回，返回次数过多，若未进入微信请重新运行脚本😱");
+            }
         }
         break;
     }
@@ -55,6 +57,13 @@ while (!id("fly").exists()) {
     });
     toast("正在打开微信");
     sleep(3000);
+    if (HASAPPLOCK && text("请输入密码").exists()) {
+        unlock(true);
+        sleep(500);
+        if (id("fly").exists()) {
+            break;
+        }
+    }
     if (launchtime > 5) home();//启动不太可能超过15秒，一般返回了假的activity，回桌面重进
     if (launchtime > 10) {
         toast("第" + launchtime + "次开启，开启次数过多，若已经进入微信请重新运行脚本😱");
