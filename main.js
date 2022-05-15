@@ -27,7 +27,11 @@ const APPLOCK_POSITION = Array(null, //应用锁的每个图案点坐标
 const DEBUG = true; //启用则不发送消息，只到达消息框输入消息
 
 if (!device.isScreenOn()) {
-    if (HASPWD) unlock(false);
+    if (HASPWD){
+        unlock(true, false);
+    }else{
+        unlock(false, false);
+    }
     sleep(1000);
 }
 toast("脚本开始运行，若你正在使用手机，请等待脚本执行完毕");
@@ -58,7 +62,7 @@ while (!id("fly").exists()) {
     toast("正在打开微信");
     sleep(3000);
     if (HASAPPLOCK && text("请输入密码").exists()) {
-        unlock(true);
+        unlock(true, true);
         sleep(500);
         if (id("fly").exists()) {
             break;
@@ -74,15 +78,15 @@ click(main.centerX(), main.centerY());
 sleep(500);
 findZztAndSend(NAME, MSG);
 
-function unlock(isAppLock) {
+function unlock(hasLock, isAppLock) {
     if (!isAppLock) {
         device.wakeUp();
         sleep(500);
         swipe(500, 2000, 500, 1000, 210);
         sleep(500);
-        PWD(PWD_POSITION);
+        if(hasLock) PWD(PWD_POSITION);
     } else {
-        APPLOCK(APPLOCK_POSITION);
+        if(hasLock) APPLOCK(APPLOCK_POSITION);
     }
 }
 
